@@ -18,9 +18,15 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    // This method is used when a new user is to be created, the password is encrypted:
     public void saveEntry(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(List.of("USER"));
+        userRepository.save(user);
+    }
+
+    // This method is used when we want to update the User, here the password is not encrypted again:
+    public void updateUserEntry(User user) {
         userRepository.save(user);
     }
 
