@@ -2,6 +2,8 @@ package com.spring.journalapp.service;
 
 import com.spring.journalapp.entity.User;
 import com.spring.journalapp.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,8 @@ import java.util.List;
 public class UserService {
     private UserRepository userRepository;
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
 
     // Constructor Based DI:
     public UserService(UserRepository userRepository) {
@@ -23,10 +27,14 @@ public class UserService {
     }
 
     // This method is used when a new user is to be created, the password is encrypted:
-    public void saveEntry(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(List.of("USER"));
-        userRepository.save(user);
+    public void saveEntry(User user) throws Exception {
+        try {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRoles(List.of("USER"));
+            userRepository.save(user);
+        } catch (Exception e) {
+            throw new Exception("This is my Exception come");
+        }
     }
 
     // This method creates a new ADMIN User:

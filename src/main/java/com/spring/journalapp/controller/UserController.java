@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @PutMapping
-    public ResponseEntity<?> updateUser(@RequestBody User user) {
+    public ResponseEntity<?> updateUser(@RequestBody User user) throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
