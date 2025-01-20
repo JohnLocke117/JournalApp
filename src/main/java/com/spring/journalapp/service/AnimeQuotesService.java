@@ -3,10 +3,10 @@ package com.spring.journalapp.service;
 import com.spring.journalapp.api.response.QuoteResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Component
+@Service
 public class AnimeQuotesService {
     private static final String API = "https://animechan.io/api/v1/quotes/random";
     private RestTemplate restTemplate;

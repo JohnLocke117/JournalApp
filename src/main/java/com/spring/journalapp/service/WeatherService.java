@@ -1,14 +1,16 @@
 package com.spring.journalapp.service;
 
 import com.spring.journalapp.api.response.WeatherResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Component
+@Service
 public class WeatherService {
-    private static final String apiKey = "fca7a4e7ca4145a0aef175724241411";
+    @Value("${weather.api.key}")
+    private String apiKey;
     private static final String API = "http://api.weatherapi.com/v1/current.json?key=API_KEY&q=CITY";
     private RestTemplate restTemplate;
 
