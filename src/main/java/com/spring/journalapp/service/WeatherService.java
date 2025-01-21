@@ -1,6 +1,7 @@
 package com.spring.journalapp.service;
 
 import com.spring.journalapp.api.response.WeatherResponse;
+import com.spring.journalapp.cache.AppCache;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -11,22 +12,22 @@ import org.springframework.web.client.RestTemplate;
 public class WeatherService {
     @Value("${weather.api.key}")
     private String apiKey;
-    private static final String API = "http://api.weatherapi.com/v1/current.json?key=API_KEY&q=CITY";
     private RestTemplate restTemplate;
+    private AppCache appCache;
 
-    public WeatherService(RestTemplate restTemplate) {
+    public WeatherService(RestTemplate restTemplate, AppCache appCache) {
         this.restTemplate = restTemplate;
+        this.appCache = appCache;
     }
 
     public WeatherResponse getWeather(String city) {
-        String url = API.replace("API_KEY", apiKey).replace("CITY", city);
+        String url = appCache.APP_CACHE.get("weather_api").replace("<API_KEY>", apiKey).replace("<CITY>", city);
         ResponseEntity<WeatherResponse> res = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 null,
                 WeatherResponse.class
         );
-
         return res.getBody();
     }
 }
