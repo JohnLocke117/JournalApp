@@ -14,20 +14,30 @@ public class WeatherService {
     private String apiKey;
     private RestTemplate restTemplate;
     private AppCache appCache;
+    private RedisService redisService;
 
-    public WeatherService(RestTemplate restTemplate, AppCache appCache) {
+    public WeatherService(RestTemplate restTemplate, AppCache appCache, RedisService redisService) {
         this.restTemplate = restTemplate;
         this.appCache = appCache;
+        this.redisService = redisService;
     }
 
     public WeatherResponse getWeather(String city) {
-        String url = appCache.APP_CACHE.get("weather_api").replace("<API_KEY>", apiKey).replace("<CITY>", city);
-        ResponseEntity<WeatherResponse> res = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                null,
-                WeatherResponse.class
-        );
-        return res.getBody();
+        // Check Redis Cache if data exists:
+        WeatherResponse weatherResponse = redisService.get(city, WeatherResponse.class);
+        if (weatherResponse != null) return weatherResponse;
+        else {
+            String url = appCache.APP_CACHE.get("weather_api").replace("<API_KEY>", apiKey).replace("<CITY>", city);
+            ResponseEntity<WeatherResponse> res = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    WeatherResponse.class
+            );
+
+            // Save in Redis Cache as well:
+            if (res.getBody() != null) redisService.set(city, res.getBody(), 300L);
+            return res.getBody();
+        }
     }
 }
